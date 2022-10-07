@@ -1,0 +1,11 @@
+Package: com.brend0n.redditnoad
+Name: RedditNoAD(Beta)
+Depends: mobilesubstrate
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: No Promoted AD
+Maintainer: Brend0n <brendonjkding@126.com>
+Author: Brend0n <brendonjkding@126.com>
+Section: Tweaks
+Depiction: http://brendonjkding.github.io/depictions/web/?p=com.brend0n.redditnoad
+SileoDepiction: http://brendonjkding.github.io/depictions/web/com.brend0n.redditnoad/depiction.json
