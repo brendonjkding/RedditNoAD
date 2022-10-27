@@ -45,13 +45,15 @@
 BOOL g_shouldBlockFeedAD;
 BOOL g_shouldBlockCommentAD;
 
+BOOL *options[]={&g_shouldBlockFeedAD, &g_shouldBlockCommentAD};
+
 %hook AppSettingsViewController
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return %orig+1;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if(section==[self numberOfSectionsInTableView:tableView]-1){
-        return 3;
+        return sizeof(options)/sizeof(BOOL *)+1;
     }
     return %orig;
 }
@@ -86,7 +88,7 @@ BOOL g_shouldBlockCommentAD;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if([indexPath section]==[self numberOfSectionsInTableView:tableView]-1){
-        if(indexPath.row == 2){
+        if(indexPath.row==[self tableView:tableView numberOfRowsInSection:[indexPath section]]-1){
             id vc = [[[self accountContext] deeplinkViewControllerFactory] viewControllerWithUrl:[NSURL URLWithString:@"https://github.com/brendonjkding/RedditNoAD"]];
             [vc setTitle:@"RedditNoAD"];
             [self navigateToViewController:vc animated:YES];
