@@ -16,6 +16,11 @@
     }
     return %orig;
 }
+-(void)showTrendingToasterIfNeeded{
+    if(!g_shouldBlockTrendingToaster){
+        %orig;
+    }
+}
 %end //PostDetailPresenter
 
 %ctor{

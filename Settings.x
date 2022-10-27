@@ -44,8 +44,9 @@
 
 BOOL g_shouldBlockFeedAD;
 BOOL g_shouldBlockCommentAD;
+BOOL g_shouldBlockTrendingToaster;
 
-BOOL *options[]={&g_shouldBlockFeedAD, &g_shouldBlockCommentAD};
+BOOL *options[]={&g_shouldBlockFeedAD, &g_shouldBlockCommentAD, &g_shouldBlockTrendingToaster};
 
 %hook AppSettingsViewController
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -79,6 +80,14 @@ BOOL *options[]={&g_shouldBlockFeedAD, &g_shouldBlockCommentAD};
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
             break;
         case 2:
+            cell = [[self tableView] dequeueReusableCellWithIdentifier:@"kToggleCellID" forIndexPath:indexPath];
+            [[cell accessorySwitch] setOn:g_shouldBlockTrendingToaster];
+            [[cell accessorySwitch] addTarget:self action:@selector(bd_didToggleBlockTrendingToaster:) forControlEvents:UIControlEventValueChanged];
+            [cell setDisplayImage:[[UIImage alloc] initWithResource:[[[objc_getClass("Assets_RedditAssets.Assets") reddit] images] iconSettings20]]];
+            [[cell mainLabel] setText:@"No \"Interested in r/XX?\""];
+            [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+            break;
+        case 3:
             cell = [self dequeueSettingsCellForTableView:tableView indexPath:indexPath leadingImage:[[UIImage alloc] initWithResource:[[[objc_getClass("Assets_RedditAssets.Assets") reddit] images] iconSafari20]] text:@"Source Code"];
             break;
         }
@@ -115,10 +124,16 @@ BOOL *options[]={&g_shouldBlockFeedAD, &g_shouldBlockCommentAD};
     g_shouldBlockCommentAD = [sender isOn];
     [[NSUserDefaults standardUserDefaults] setObject:@(g_shouldBlockCommentAD) forKey:@"bd_shouldBlockCommentAD"];
 }
+%new
+- (void)bd_didToggleBlockTrendingToaster:(id)sender{
+    g_shouldBlockTrendingToaster = [sender isOn];
+    [[NSUserDefaults standardUserDefaults] setObject:@(g_shouldBlockTrendingToaster) forKey:@"bd_shouldBlockTrendingToaster"];
+}
 %end //AppSettingsViewController
 
 %ctor{
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     g_shouldBlockFeedAD = [defaults objectForKey:@"bd_shouldBlockFeedAD"]?[defaults boolForKey:@"bd_shouldBlockFeedAD"]:YES;
     g_shouldBlockCommentAD = [defaults objectForKey:@"bd_shouldBlockCommentAD"]?[defaults boolForKey:@"bd_shouldBlockCommentAD"]:YES;
+    g_shouldBlockTrendingToaster = [defaults objectForKey:@"bd_shouldBlockTrendingToaster"]?[defaults boolForKey:@"bd_shouldBlockTrendingToaster"]:YES;
 }
