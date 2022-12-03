@@ -48,18 +48,21 @@ BOOL g_shouldBlockTrendingToaster;
 
 BOOL *options[]={&g_shouldBlockFeedAD, &g_shouldBlockCommentAD, &g_shouldBlockTrendingToaster};
 
+static NSInteger ourSection = NSNotFound;
+
 %hook AppSettingsViewController
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return %orig+1;
+    ourSection = %orig;
+    return ourSection+1;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if(section==[self numberOfSectionsInTableView:tableView]-1){
+    if(section==ourSection){
         return sizeof(options)/sizeof(BOOL *)+1;
     }
     return %orig;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if([indexPath section]==[self numberOfSectionsInTableView:tableView]-1){
+    if([indexPath section]==ourSection){
         NSInteger row = indexPath.row;
         id cell;
         switch(row){
@@ -96,8 +99,8 @@ BOOL *options[]={&g_shouldBlockFeedAD, &g_shouldBlockCommentAD, &g_shouldBlockTr
     return %orig;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    if([indexPath section]==[self numberOfSectionsInTableView:tableView]-1){
-        if(indexPath.row==[self tableView:tableView numberOfRowsInSection:[indexPath section]]-1){
+    if([indexPath section]==ourSection){
+        if(indexPath.row==[self tableView:tableView numberOfRowsInSection:ourSection]-1){
             id vc = [[[self accountContext] deeplinkViewControllerFactory] viewControllerWithUrl:[NSURL URLWithString:@"https://github.com/brendonjkding/RedditNoAD"]];
             [vc setTitle:@"RedditNoAD"];
             [self navigateToViewController:vc animated:YES];
@@ -109,7 +112,7 @@ BOOL *options[]={&g_shouldBlockFeedAD, &g_shouldBlockCommentAD, &g_shouldBlockTr
 }
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     id orig = %orig;
-    if(section==[self numberOfSectionsInTableView:tableView]-1){
+    if(section==ourSection){
         [[[[orig contentView] subviews] lastObject] setText:@"REDDIT NO AD"];
     }
     return orig;
