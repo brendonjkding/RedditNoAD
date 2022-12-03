@@ -29,6 +29,14 @@
 }
 %end //PostDetailPresenter
 
+%hook SubredditPagePresenter
+-(void)showRecommendationToasterIfNeeded{
+    if(!g_shouldBlockTrendingToaster){
+        %orig;
+    }
+}
+%end //SubredditPagePresenter
+
 %ctor{
     NSLog(@"ctor: RedditNoAD");
 }
