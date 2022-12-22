@@ -13,6 +13,12 @@
     }
     return %orig;
 }
+- (id)postWithData:(id)arg1{
+    if(g_shouldBlockFeedAD && [arg1[@"promoted"] boolValue]){
+        return nil;
+    }
+    return %orig;
+}
 %end //RedditService
 
 %hook PostDetailPresenter
