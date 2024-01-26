@@ -132,6 +132,12 @@ static NSInteger ourSection = NSNotFound;
     g_shouldBlockTrendingToaster = [sender isOn];
     [[NSUserDefaults standardUserDefaults] setObject:@(g_shouldBlockTrendingToaster) forKey:@"bd_shouldBlockTrendingToaster"];
 }
+- (NSUInteger)sectionFromSection:(NSInteger)arg1{
+    if(arg1 == ourSection){
+        return ourSection;
+    }
+    return %orig;
+}
 %end //AppSettingsViewController
 
 %ctor{
